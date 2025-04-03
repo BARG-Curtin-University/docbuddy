@@ -83,6 +83,20 @@ atari-assist build-kb
 
 # Build without saving embeddings
 atari-assist build-kb --no-save-embeddings
+
+# Customize chunking parameters
+atari-assist build-kb --chunk-size 500 --chunk-overlap 100
+
+# Use a different embedding model
+atari-assist build-kb --embedding-model all-mpnet-base-v2
+
+# Force rebuild even if documents haven't changed
+atari-assist build-kb --force
+```
+
+### View knowledge base information
+```bash
+atari-assist kb-info
 ```
 
 ### Check if embedding libraries are installed
@@ -134,9 +148,20 @@ For Ollama, make sure the Ollama service is running locally.
 
 Edit the `atari_assist/config.py` file to customize:
 
-- Default model
-- Model specific configurations
-- Source directory for Atari documentation
+#### LLM Settings
+- `DEFAULT_MODEL`: Set the default LLM provider (e.g., "openai", "ollama", "claude", etc.)
+- `OPENAI_MODEL`: Specific OpenAI model to use (e.g., "gpt-3.5-turbo")
+- `OLLAMA_MODEL`: Specific Ollama model to use (e.g., "llama3")
+- `CLAUDE_MODEL`: Specific Claude model to use
+- `GEMINI_MODEL`: Specific Gemini model to use
+- `GROQ_MODEL`: Specific Groq model to use
+
+#### RAG Settings
+You can modify these in `core/document_retrieval.py`:
+- `DEFAULT_CHUNK_SIZE`: Default size of document chunks (default: 1000 characters)
+- `DEFAULT_CHUNK_OVERLAP`: Default overlap between chunks (default: 200 characters)
+
+These can also be set via command line when building the knowledge base.
 
 ## RAG Implementation
 

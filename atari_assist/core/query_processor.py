@@ -85,7 +85,13 @@ def preview_matches(question: str, top_n: int = 4) -> List[Tuple[str, str]]:
         for c in chunks
     ]
 
-def build_or_rebuild_kb(save_embeddings: bool = True) -> None:
+def build_or_rebuild_kb(
+    save_embeddings: bool = True, 
+    chunk_size: int = 1000,
+    chunk_overlap: int = 200,
+    embedding_model: str = "all-MiniLM-L6-v2",
+    force: bool = False
+) -> int:
     """Build or rebuild the knowledge base.
     
     This function is useful for CLI commands or scheduled tasks
@@ -93,14 +99,43 @@ def build_or_rebuild_kb(save_embeddings: bool = True) -> None:
     
     Args:
         save_embeddings: Whether to save embeddings to disk
+        chunk_size: Size of document chunks
+        chunk_overlap: Overlap between chunks
+        embedding_model: Name of the embedding model to use
+        force: Force rebuild even if no changes detected
+        
+    Returns:
+        Number of chunks in the knowledge base
     """
     global _knowledge_base_cache
     
     # Force rebuild
     _knowledge_base_cache = None
     
+    # Pass the parameters to the document retrieval module
+    from atari_assist.core.document_retrieval import DEFAULT_CHUNK_SIZE, DEFAULT_CHUNK_OVERLAP
+    
+    # Temporarily override the default chunk size and overlap
+    original_chunk_size = DEFAULT_CHUNK_SIZE
+    original_chunk_overlap = DEFAULT_CHUNK_OVERLAP
+    
+    # Import here to modify module variables
+    import atari_assist.core.document_retrieval as dr
+    dr.DEFAULT_CHUNK_SIZE = chunk_size
+    dr.DEFAULT_CHUNK_OVERLAP = chunk_overlap
+    
     # Build knowledge base with embeddings if available
-    kb = build_knowledge_base(SOURCE_DIR, save_embeddings=save_embeddings)
+    try:
+        kb = build_knowledge_base(
+            SOURCE_DIR, 
+            save_embeddings=save_embeddings,
+            embedding_model=embedding_model,
+            force=force
+        )
+    finally:
+        # Restore original values
+        dr.DEFAULT_CHUNK_SIZE = original_chunk_size
+        dr.DEFAULT_CHUNK_OVERLAP = original_chunk_overlap
     
     # Update cache
     _knowledge_base_cache = kb

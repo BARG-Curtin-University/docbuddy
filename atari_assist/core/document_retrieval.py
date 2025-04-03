@@ -187,25 +187,74 @@ def get_best_chunks(docs: List[Dict[str, str]], query: str, top_n: int = 4) -> L
         # Fall back to lexical search if numpy is not available
         return get_best_chunks_lexical(docs, query, top_n)
     
-def build_knowledge_base(source_dir: str, save_embeddings: bool = False) -> List[Dict[str, Any]]:
+def build_knowledge_base(
+    source_dir: str, 
+    save_embeddings: bool = False, 
+    embedding_model: str = "all-MiniLM-L6-v2",
+    force: bool = False
+) -> List[Dict[str, Any]]:
     """Build a knowledge base from documents in the source directory.
     
     Args:
         source_dir: Directory containing the documents to load
         save_embeddings: Whether to save embeddings for future use
+        embedding_model: Name of the sentence-transformers model to use
+        force: Force rebuild even if no changes detected
         
     Returns:
         List of document chunk dictionaries
     """
+    import os
+    import hashlib
+    import json
+    import time
+    
+    # Load documents
     docs = load_documents(source_dir, recursive=True)
     chunked_docs = create_document_chunks(docs)
+    
+    # Directory for KB files
+    kb_dir = os.path.join(source_dir, ".kb")
+    os.makedirs(kb_dir, exist_ok=True)
+    
+    # File paths
+    kb_path = os.path.join(kb_dir, "knowledge_base.json")
+    metadata_path = os.path.join(kb_dir, "metadata.json")
+    
+    # Check if we need to rebuild by comparing hashes of document contents
+    if not force and os.path.exists(kb_path) and os.path.exists(metadata_path):
+        try:
+            with open(metadata_path, "r") as f:
+                metadata = json.load(f)
+            
+            # Compute new hash of all documents
+            doc_hash = hashlib.md5()
+            for doc in docs:
+                doc_hash.update(doc["content"].encode())
+                doc_hash.update(doc["filename"].encode())
+            current_hash = doc_hash.hexdigest()
+            
+            # If hash matches and embedding model matches, we can reuse existing KB
+            if (metadata.get("hash") == current_hash and 
+                metadata.get("embedding_model") == embedding_model and
+                metadata.get("chunk_size") == DEFAULT_CHUNK_SIZE and
+                metadata.get("chunk_overlap") == DEFAULT_CHUNK_OVERLAP):
+                
+                print(f"No changes detected in documents. Using existing knowledge base.")
+                with open(kb_path, "r") as f:
+                    return json.load(f)
+                
+        except (json.JSONDecodeError, KeyError, FileNotFoundError):
+            # If any error occurs, rebuild the knowledge base
+            pass
     
     # Try to compute embeddings if available
     try:
         from sentence_transformers import SentenceTransformer
         import numpy as np
         
-        model = SentenceTransformer('all-MiniLM-L6-v2')
+        print(f"Computing embeddings using model: {embedding_model}")
+        model = SentenceTransformer(embedding_model)
         
         # Compute embeddings for all chunks
         contents = [doc["content"] for doc in chunked_docs]
@@ -216,18 +265,58 @@ def build_knowledge_base(source_dir: str, save_embeddings: bool = False) -> List
         
         # Save embeddings if requested
         if save_embeddings:
-            import json
-            import os
-            
-            kb_dir = os.path.join(source_dir, ".kb")
-            os.makedirs(kb_dir, exist_ok=True)
-            
-            with open(os.path.join(kb_dir, "knowledge_base.json"), "w") as f:
+            # Save knowledge base
+            with open(kb_path, "w") as f:
                 json.dump(chunked_docs, f)
+            
+            # Compute hash of all documents for change detection
+            doc_hash = hashlib.md5()
+            for doc in docs:
+                doc_hash.update(doc["content"].encode())
+                doc_hash.update(doc["filename"].encode())
+            
+            # Save metadata
+            metadata = {
+                "hash": doc_hash.hexdigest(),
+                "created_at": time.time(),
+                "embedding_model": embedding_model,
+                "chunk_size": DEFAULT_CHUNK_SIZE,
+                "chunk_overlap": DEFAULT_CHUNK_OVERLAP,
+                "num_docs": len(docs),
+                "num_chunks": len(chunked_docs)
+            }
+            
+            with open(metadata_path, "w") as f:
+                json.dump(metadata, f)
     
     except ImportError:
         # Continue without embeddings if libraries not available
-        pass
+        print("Warning: sentence-transformers not installed. Using lexical search only.")
+        
+        # Still save the chunked documents if requested
+        if save_embeddings:
+            with open(kb_path, "w") as f:
+                json.dump(chunked_docs, f)
+            
+            # Compute hash for change detection
+            doc_hash = hashlib.md5()
+            for doc in docs:
+                doc_hash.update(doc["content"].encode())
+                doc_hash.update(doc["filename"].encode())
+            
+            # Save metadata without embedding info
+            metadata = {
+                "hash": doc_hash.hexdigest(),
+                "created_at": time.time(),
+                "embedding_model": None,  # No embedding model used
+                "chunk_size": DEFAULT_CHUNK_SIZE,
+                "chunk_overlap": DEFAULT_CHUNK_OVERLAP,
+                "num_docs": len(docs),
+                "num_chunks": len(chunked_docs)
+            }
+            
+            with open(metadata_path, "w") as f:
+                json.dump(metadata, f)
     
     return chunked_docs
 
@@ -241,14 +330,28 @@ def load_knowledge_base(source_dir: str) -> List[Dict[str, Any]]:
         List of document chunk dictionaries
     """
     kb_path = os.path.join(source_dir, ".kb", "knowledge_base.json")
+    metadata_path = os.path.join(source_dir, ".kb", "metadata.json")
     
     if os.path.exists(kb_path):
         try:
             import json
             import numpy as np
             
+            # Load the knowledge base
             with open(kb_path, "r") as f:
                 chunked_docs = json.load(f)
+            
+            # Load metadata if available
+            if os.path.exists(metadata_path):
+                with open(metadata_path, "r") as f:
+                    metadata = json.load(f)
+                print(f"Using knowledge base with {metadata.get('num_chunks', len(chunked_docs))} chunks")
+                print(f"Created at: {time.ctime(metadata.get('created_at', 0))}")
+                
+                if metadata.get('embedding_model'):
+                    print(f"Embedding model: {metadata.get('embedding_model')}")
+                else:
+                    print("No embeddings - using lexical search only")
             
             # Convert embedding lists back to numpy arrays if needed
             try:
@@ -261,9 +364,11 @@ def load_knowledge_base(source_dir: str) -> List[Dict[str, Any]]:
             
             return chunked_docs
             
-        except Exception:
+        except Exception as e:
+            print(f"Error loading knowledge base: {e}")
             # Fall back to building knowledge base if loading fails
             return build_knowledge_base(source_dir)
     else:
+        print("No existing knowledge base found. Building...")
         # Build knowledge base if not found
         return build_knowledge_base(source_dir)
