@@ -35,6 +35,19 @@ setup(
             "black",
             "mypy",
         ],
+        "embeddings": [
+            "numpy",
+            "sentence-transformers",
+        ],
+        "full": [
+            "numpy",
+            "sentence-transformers", 
+            "pytest",
+            "pytest-cov",
+            "ruff",
+            "black",
+            "mypy",
+        ]
     },
     entry_points={
         "console_scripts": [
@@ -53,6 +66,6 @@ setup(
         "Intended Audience :: Developers",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
-    keywords="atari, 2600, llm, assistant, cli, web",
+    keywords="atari, 2600, llm, assistant, cli, web, rag",
 )
 

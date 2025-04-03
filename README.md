@@ -11,18 +11,23 @@ A command-line and web assistant to help with Atari 2600 programming using AI mo
 - Choose from multiple LLM backends (OpenAI, Claude, Gemini, Groq, Ollama)
 - Preview matching documents before asking
 - Use as a CLI tool or a web application with FastHTML
-- Fully tested and modular codebase
+- Advanced RAG (Retrieval-Augmented Generation) with semantic search
+- Recursive document search to handle organized file structures
+- Document chunking for precise information retrieval
+- Pre-compute and save embeddings for faster retrieval
 - Simple and intuitive interface
 
 ## Overview
 
 Atari Assist is a tool designed to help Atari 2600 programmers. It works by:
 
-1. Loading Atari 2600 related documentation from a directory
-2. Finding the most relevant documents for a user's question
-3. Constructing a prompt with these documents
-4. Sending the prompt to an LLM for an answer
-5. Displaying the result to the user
+1. Loading Atari 2600 related documentation from a directory (including subfolders)
+2. Splitting documents into smaller chunks for precise retrieval
+3. Computing embeddings for semantic search (when supported libraries are available)
+4. Finding the most relevant document chunks for a user's question
+5. Constructing a prompt with these relevant chunks
+6. Sending the prompt to an LLM for an answer
+7. Displaying the result to the user
 
 ## Installation
 
@@ -33,26 +38,23 @@ Atari Assist is a tool designed to help Atari 2600 programmers. It works by:
 git clone https://github.com/yourusername/atari-assist.git
 cd atari-assist
 
-# Install the package
+# Basic installation
 pip install -e .
 
-# For development dependencies
-pip install -e ".[dev]"
+# With embedding support for semantic search (recommended)
+pip install -e ".[embeddings]"
+
+# Full installation with development dependencies
+pip install -e ".[full]"
 ```
 
 ### Requirements
 
 - Python 3.9 or higher
-- Required Python packages (automatically installed):
-  - typer
-  - rich
-  - openai
-  - anthropic
-  - requests
-  - google-generativeai
-  - groq
-  - python-fasthtml
-  - python-dotenv
+- Basic requirements (automatically installed):
+  - typer, rich, openai, anthropic, requests, google-generativeai, groq, python-fasthtml, python-dotenv
+- Optional embedding dependencies (for semantic search):
+  - numpy, sentence-transformers
 
 ## Command-Line Usage
 
@@ -72,6 +74,20 @@ atari-assist ask "How to use registers?" --model groq
 ### Preview top matching docs before asking
 ```bash
 atari-assist preview "Detecting collisions"
+```
+
+### Build or rebuild the knowledge base
+```bash
+# Build with saved embeddings (recommended)
+atari-assist build-kb
+
+# Build without saving embeddings
+atari-assist build-kb --no-save-embeddings
+```
+
+### Check if embedding libraries are installed
+```bash
+atari-assist check-embedding-libs
 ```
 
 ### List supported models
@@ -122,6 +138,30 @@ Edit the `atari_assist/config.py` file to customize:
 - Model specific configurations
 - Source directory for Atari documentation
 
+## RAG Implementation
+
+Atari Assist implements a Retrieval-Augmented Generation (RAG) system with the following features:
+
+### Document Loading
+- Recursively searches directories for documentation files
+- Supports any text-based document format
+- Maintains file path information for better source tracking
+
+### Document Chunking
+- Splits documents into smaller, semantically meaningful chunks
+- Preserves sentence boundaries for context
+- Configurable chunk size and overlap
+
+### Semantic Search (when available)
+- Uses sentence-transformers for computing embeddings
+- Falls back to lexical search when embedding libraries aren't available
+- Pre-computes and caches embeddings for better performance
+
+### Knowledge Base Management
+- Builds and saves embeddings to disk
+- Loads pre-built knowledge base for faster startup
+- Command-line tools for managing the knowledge base
+
 ## Project Structure
 
 ```
@@ -130,7 +170,7 @@ atari_assist/
 ├── config.py
 ├── core/               # Core functionality
 │   ├── __init__.py
-│   ├── document_retrieval.py
+│   ├── document_retrieval.py  # Advanced RAG implementation
 │   ├── prompt_builder.py
 │   └── query_processor.py
 ├── llm/                # LLM integrations
@@ -159,6 +199,9 @@ atari_assist/
 ```bash
 # Install development dependencies
 pip install -e ".[dev]"
+
+# Full installation including embedding libraries
+pip install -e ".[full]"
 ```
 
 ### Run Tests
@@ -194,7 +237,13 @@ mypy atari_assist
 
 ## Adding Your Own Atari Documentation
 
-Place your Atari 2600 documentation files in the `atari_docs` directory. The system will automatically load and index these documents for query matching.
+Place your Atari 2600 documentation files in the `atari_docs` directory. You can organize files in subfolders as needed. The system will automatically load and index all documents.
+
+After adding new documentation, rebuild the knowledge base:
+
+```bash
+atari-assist build-kb
+```
 
 ## License
 
