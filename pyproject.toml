@@ -2,7 +2,25 @@
 name = "docbuddy"
 version = "0.1.0"
 description = "CLI and web assistant for document collections using LLMs and RAG"
-authors = ["DocBuddy Contributors <you@example.com>"]
+authors = [
+    {name = "Michael Borck", email = "michael@borck.me"}
+]
+readme = "README.md"
+license = "MIT"
+keywords = ["rag", "llm", "assistant", "cli", "web", "documentation", "chat", "knowledge-base"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Documentation",
+    "Topic :: Text Processing :: Markup",
+]
 requires-python = ">=3.9"
 dependencies = [
     "typer[all]",
@@ -52,4 +70,8 @@ line-length = 100
 minversion = "6.0"
 addopts = "-ra -q"
 testpaths = ["tests"]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
 

@@ -1,0 +1,8 @@
+include LICENSE
+include CONTRIBUTING.md
+include README.md
+include config.json.example
+include env-template.txt
+recursive-include docbuddy/web/templates *.html
+recursive-include docbuddy/web/static *
+recursive-include docbuddy/tui *.css
