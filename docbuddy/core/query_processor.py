@@ -196,6 +196,34 @@ def build_or_rebuild_kb(
     
     return len(kb)
 
+def process_query(
+    question: str, 
+    model: Optional[str] = None,
+    template_name: Optional[str] = None,
+    source_dir: Optional[str] = None
+) -> str:
+    """Process a query and return the answer.
+    
+    This is a simpler interface that just returns the answer string.
+    
+    Args:
+        question: The question to ask
+        model: The LLM model to use
+        template_name: Which prompt template to use
+        source_dir: Override the source directory
+        
+    Returns:
+        The answer as a string
+    """
+    result = ask_question(
+        question=question,
+        model=model,
+        template_name=template_name,
+        source_dir=source_dir
+    )
+    
+    return result["answer"]
+
 def get_kb_info(source_dir: Optional[str] = None) -> Dict[str, Any]:
     """Get information about the knowledge base.
     
