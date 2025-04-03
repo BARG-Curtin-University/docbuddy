@@ -228,12 +228,12 @@ def get_best_chunks(
     
 def build_knowledge_base(
     source_dir: Optional[str] = None, 
-    save_embeddings: bool = False, 
+    save_embeddings: bool = True, 
     embedding_model: Optional[str] = None,
     chunk_size: Optional[int] = None,
     chunk_overlap: Optional[int] = None,
     force: bool = False
-) -> List[Dict[str, Any]]:
+) -> Dict[str, Any]:
     """Build a knowledge base from documents in the source directory.
     
     Args:
@@ -438,3 +438,70 @@ def load_knowledge_base(source_dir: Optional[str] = None) -> List[Dict[str, Any]
         print("No existing knowledge base found. Building...")
         # Build knowledge base if not found
         return build_knowledge_base(source_dir)
+
+def kb_info(source_dir: Optional[str] = None) -> Dict[str, Any]:
+    """Get information about the knowledge base.
+    
+    Args:
+        source_dir: Directory containing the documents
+        
+    Returns:
+        Dictionary with information about the knowledge base
+    """
+    # Get configuration
+    config = get_rag_config()
+    if source_dir is None:
+        source_dir = config["source_dir"]
+    kb_dir = config.get("kb_dir", ".kb")
+    
+    # Ensure the source directory exists
+    os.makedirs(source_dir, exist_ok=True)
+        
+    kb_path = os.path.join(source_dir, kb_dir, "knowledge_base.json")
+    metadata_path = os.path.join(source_dir, kb_dir, "metadata.json")
+    
+    # Check for docs in the source directory
+    docs = load_documents(source_dir, recursive=True)
+    
+    # Sample a few document paths for display
+    sample_docs = [doc["filename"] for doc in docs[:5]]
+    
+    result = {
+        "source_dir": source_dir,
+        "doc_count": len(docs),
+        "sample_docs": sample_docs,
+        "kb_exists": os.path.exists(kb_path),
+        "metadata_exists": os.path.exists(metadata_path)
+    }
+    
+    # Add metadata if available
+    if os.path.exists(metadata_path):
+        try:
+            with open(metadata_path, "r") as f:
+                metadata = json.load(f)
+            result["metadata"] = metadata
+            result["kb_size_mb"] = os.path.getsize(kb_path) / (1024 * 1024)
+        except (json.JSONDecodeError, FileNotFoundError):
+            pass
+    
+    return result
+
+def get_matching_documents(query: str, top_n: int = 3, source_dir: Optional[str] = None) -> List[Tuple[str, str]]:
+    """Get matching documents for a query.
+    
+    Args:
+        query: The query to match against documents
+        top_n: Number of top matches to return
+        source_dir: Directory containing the documents (optional)
+        
+    Returns:
+        List of (filename, snippet) tuples
+    """
+    # Load the knowledge base
+    chunks = load_knowledge_base(source_dir)
+    
+    # Get the best matching chunks
+    best_chunks = get_best_chunks(chunks, query, top_n)
+    
+    # Return the best matches as (filename, content) tuples
+    return [(chunk["filename"], chunk["content"]) for chunk in best_chunks]
