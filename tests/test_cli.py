@@ -3,12 +3,12 @@ import pytest
 from unittest.mock import patch, MagicMock
 from typer.testing import CliRunner
 
-from atari_assist.cli.main import app
-from atari_assist.core import ask_question, preview_matches
+from docbuddy.cli.main import app
+from docbuddy.core import ask_question, preview_matches
 
 runner = CliRunner()
 
-@patch('atari_assist.cli.main.ask_question')
+@patch('docbuddy.cli.main.ask_question')
 def test_cli_ask(mock_ask):
     """Test the CLI ask command."""
     # Setup mock
@@ -22,7 +22,7 @@ def test_cli_ask(mock_ask):
     mock_ask.assert_called_once_with("How does WSYNC work?", "openai")
     assert "This is a mock answer." in result.stdout
 
-@patch('atari_assist.cli.main.ask_question')
+@patch('docbuddy.cli.main.ask_question')
 def test_cli_ask_with_model(mock_ask):
     """Test the CLI ask command with a specified model."""
     # Setup mock
@@ -49,7 +49,7 @@ def test_cli_list_models():
     assert "gemini" in result.stdout
     assert "groq" in result.stdout
 
-@patch('atari_assist.cli.main.preview_matches')
+@patch('docbuddy.cli.main.preview_matches')
 def test_cli_preview(mock_preview):
     """Test the CLI preview command."""
     # Setup mock

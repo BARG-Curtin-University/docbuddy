@@ -5,7 +5,7 @@ A general-purpose document assistant for any documentation using RAG and LLMs li
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python Version](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/downloads/)
 
-> **Note**: This project evolved from [Atari Assist](https://github.com/yourusername/atari-assist), a specialized assistant for Atari 2600 development. DocBuddy takes the core RAG architecture and makes it more general-purpose for any documentation.
+> **Note**: DocBuddy is a general-purpose document assistant that can work with any type of documentation. It uses a Retrieval-Augmented Generation (RAG) architecture to provide accurate and contextual answers based on your documents.
 
 ## Features
 
@@ -418,5 +418,5 @@ Contributions are welcome! Please see the [CONTRIBUTING.md](CONTRIBUTING.md) fil
 ## Acknowledgments
 
 - Thanks to all contributors who have helped with this project
-- This project evolved from Atari Assist, which was focused specifically on Atari 2600 development
+- This project evolved from an earlier specialized document assistant
 - Thanks to the open-source LLM and RAG communities for their excellent tools and libraries

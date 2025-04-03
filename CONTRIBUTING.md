@@ -1,6 +1,6 @@
-# Contributing to Atari Assist
+# Contributing to DocBuddy
 
-Thank you for considering contributing to Atari Assist! This document provides guidelines and instructions for contributing.
+Thank you for considering contributing to DocBuddy! This document provides guidelines and instructions for contributing.
 
 ## Code of Conduct
 
@@ -38,8 +38,8 @@ Enhancement suggestions are welcome. Please include:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/atari-assist.git
-   cd atari-assist
+   git clone https://github.com/yourusername/docbuddy.git
+   cd docbuddy
    ```
 
 2. Install development dependencies:
@@ -65,11 +65,12 @@ Enhancement suggestions are welcome. Please include:
 ## Project Structure
 
 ```
-atari_assist/
+docbuddy/
 ├── core/               # Core functionality
 ├── llm/                # LLM integrations
 ├── cli/                # CLI interface
-└── web/                # Web interface
+├── web/                # Web interface
+└── tui/                # Text User Interface
 ```
 
 ### Adding a New LLM Provider
@@ -88,6 +89,14 @@ The web interface uses FastHTML. To add new features:
 2. Register routes in `web/app.py`
 3. Add any necessary templates or static files
 
+### Extending the TUI
+
+The Text User Interface uses Textual. To add new features:
+
+1. Modify the app in `tui/app.py`
+2. Add new screens or widgets as needed
+3. Update CSS styles in `tui/style.css`
+
 ## Documentation
 
 Please document your code with docstrings following the Google Python Style Guide.
@@ -98,4 +107,4 @@ Please document your code with docstrings following the Google Python Style Guid
 - Ensure all tests pass before submitting a pull request
 - Add both unit tests and integration tests as appropriate
 
-Thank you for contributing to Atari Assist!
+Thank you for contributing to DocBuddy!

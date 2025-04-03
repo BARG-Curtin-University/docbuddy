@@ -1,5 +1,5 @@
-from atari_assist.core import preview_matches, ask_question
-from atari_assist.config import DEFAULT_MODEL
+from docbuddy.core import preview_matches, ask_question
+from docbuddy.config import DEFAULT_MODEL
 
 def test_preview_returns_results():
     results = preview_matches("How does WSYNC work?")
@@ -16,8 +16,8 @@ def test_ask_question_runs():
 
 def test_llm_factory():
     """Test that we can get different LLM implementations."""
-    from atari_assist.llm import get_llm
-    from atari_assist.llm.base import BaseLLM
+    from docbuddy.llm import get_llm
+    from docbuddy.llm.base import BaseLLM
     
     # Test default model
     llm = get_llm(DEFAULT_MODEL)

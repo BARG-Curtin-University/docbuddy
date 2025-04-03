@@ -52,8 +52,6 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "atari-assist=atari_assist.cli.main:app",
-            "atari-assist-web=atari_assist.web.app:serve_app",
             "docbuddy=docbuddy.cli.main:app"
         ],
     },

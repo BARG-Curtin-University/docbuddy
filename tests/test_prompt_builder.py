@@ -1,5 +1,5 @@
 """Tests for prompt builder."""
-from atari_assist.core.prompt_builder import build_prompt
+from docbuddy.core.prompt_builder import build_prompt
 
 def test_build_prompt():
     """Test building a prompt from document chunks."""
