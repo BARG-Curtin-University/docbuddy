@@ -1,33 +1,41 @@
-# Atari Assist
+# DocBuddy
 
-A command-line and web assistant to help with Atari 2600 programming using AI models like OpenAI, Claude, Gemini, Groq, and Ollama.
+A general-purpose document assistant for any documentation using RAG and LLMs like OpenAI, Claude, Gemini, Groq, and Ollama.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python Version](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/downloads/)
 
+> **Note**: This project evolved from [Atari Assist](https://github.com/yourusername/atari-assist), a specialized assistant for Atari 2600 development. DocBuddy takes the core RAG architecture and makes it more general-purpose for any documentation.
+
 ## Features
 
-- Ask questions about Atari 2600 programming
+- Ask questions about any documentation
 - Choose from multiple LLM backends (OpenAI, Claude, Gemini, Groq, Ollama)
+- Different prompt templates for varying control of LLM knowledge usage
+- Knowledge base metrics and confidence scoring
 - Preview matching documents before asking
-- Use as a CLI tool or a web application with FastHTML
+- **Three interface options**:
+  - Command-line interface (CLI)
+  - Web application with FastHTML (100% server-side rendered)
+  - Text User Interface (TUI) with Textual
 - Advanced RAG (Retrieval-Augmented Generation) with semantic search
 - Recursive document search to handle organized file structures
-- Document chunking for precise information retrieval
+- Configurable document chunking for precise information retrieval
 - Pre-compute and save embeddings for faster retrieval
+- Comprehensive configuration system with JSON files and environment variables
 - Simple and intuitive interface
 
 ## Overview
 
-Atari Assist is a tool designed to help Atari 2600 programmers. It works by:
+DocBuddy is a general-purpose document assistant for any documentation. It works by:
 
-1. Loading Atari 2600 related documentation from a directory (including subfolders)
-2. Splitting documents into smaller chunks for precise retrieval
-3. Computing embeddings for semantic search (when supported libraries are available)
+1. Loading documentation from a specified directory (including subfolders)
+2. Splitting documents into smaller chunks for precise retrieval with configurable size and overlap
+3. Computing embeddings for semantic search (with fallback to lexical search)
 4. Finding the most relevant document chunks for a user's question
-5. Constructing a prompt with these relevant chunks
+5. Building prompts using configurable templates (isolation, complementary, or supplementary)
 6. Sending the prompt to an LLM for an answer
-7. Displaying the result to the user
+7. Evaluating and displaying the result to the user
 
 ## Installation
 
@@ -35,8 +43,8 @@ Atari Assist is a tool designed to help Atari 2600 programmers. It works by:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/atari-assist.git
-cd atari-assist
+git clone https://github.com/yourusername/docbuddy.git
+cd docbuddy
 
 # Basic installation
 pip install -e .
@@ -60,144 +68,273 @@ pip install -e ".[full]"
 
 ### Ask a question using OpenAI (default)
 ```bash
-atari-assist ask "How to draw a missile?"
+docbuddy ask "How do I implement a REST API?"
 ```
 
 ### Use a different LLM backend
 ```bash
-atari-assist ask "How does WSYNC work?" --model ollama
-atari-assist ask "How to handle collisions?" --model claude
-atari-assist ask "What is a playfield?" --model gemini
-atari-assist ask "How to use registers?" --model groq
+docbuddy ask "What is dependency injection?" --model ollama
+docbuddy ask "How to write unit tests?" --model claude
+docbuddy ask "Explain Docker containers" --model gemini
+docbuddy ask "What is functional programming?" --model groq
+```
+
+### Use different prompt templates
+```bash
+# Use only document knowledge (isolation)
+docbuddy ask "What's in this documentation?" --template isolation
+
+# Use documents first, fall back to model knowledge if needed (complementary)
+docbuddy ask "Compare React and Angular" --template complementary
+
+# Combine document knowledge with model knowledge (supplementary)
+docbuddy ask "Explain microservices architecture" --template supplementary
 ```
 
 ### Preview top matching docs before asking
 ```bash
-atari-assist preview "Detecting collisions"
+docbuddy preview "authentication best practices"
 ```
 
 ### Build or rebuild the knowledge base
 ```bash
 # Build with saved embeddings (recommended)
-atari-assist build-kb
+docbuddy build-kb
 
 # Build without saving embeddings
-atari-assist build-kb --no-save-embeddings
+docbuddy build-kb --no-save-embeddings
 
 # Customize chunking parameters
-atari-assist build-kb --chunk-size 500 --chunk-overlap 100
+docbuddy build-kb --chunk-size 500 --chunk-overlap 100
 
 # Use a different embedding model
-atari-assist build-kb --embedding-model all-mpnet-base-v2
+docbuddy build-kb --embedding-model all-mpnet-base-v2
 
 # Force rebuild even if documents haven't changed
-atari-assist build-kb --force
+docbuddy build-kb --force
+
+# Use a custom source directory
+docbuddy build-kb --source-dir /path/to/your/docs
 ```
 
 ### View knowledge base information
 ```bash
-atari-assist kb-info
+docbuddy kb-info
+```
+
+### View configuration information
+```bash
+docbuddy config-info
 ```
 
 ### Check if embedding libraries are installed
 ```bash
-atari-assist check-embedding-libs
+docbuddy check-embedding-libs
 ```
 
-### List supported models
+### List supported models and templates
 ```bash
-atari-assist list-models
+docbuddy list-models
+docbuddy list-templates
 ```
 
-## Web Application
+## Interface Options
 
-Atari Assist includes a FastHTML web interface that provides the same functionality with a user-friendly web interface.
+DocBuddy offers three different interfaces to suit your preferences and use cases.
 
-### Starting the Web Server
+### Command-Line Interface (CLI)
+
+The CLI provides a traditional command-line experience with rich text output:
 
 ```bash
-atari-assist-web
+docbuddy ask "How do I implement a REST API?"
+```
+
+### Web Application
+
+DocBuddy includes a FastHTML web interface with a user-friendly UI and 100% server-side rendering.
+
+```bash
+# Start the web server
+docbuddy web
 ```
 
 By default, the server runs on http://localhost:8000
 
-### Web Interface Features
+#### Web Interface Features
 
 - Ask questions with a simple form interface
 - Select which LLM backend to use
+- Choose prompt templates
 - Preview matching documents
-- View model information
-- Interactive, responsive UI with real-time updates
+- View source information for answers
+- No JavaScript required (100% server-side rendered)
+
+### Text User Interface (TUI)
+
+The TUI provides a rich terminal interface using the Textual framework:
+
+```bash
+# Start the TUI application
+docbuddy tui
+```
+
+#### TUI Features
+
+- Full-screen interactive terminal interface
+- Keyboard shortcuts for quick navigation
+- Dark mode toggle
+- Integrated knowledge base management
+- Real-time status indicators
+- Cross-platform compatibility
 
 ## Configuration
 
-### LLM API Keys
+DocBuddy provides a comprehensive configuration system with multiple layers:
 
-Set up your API keys in a `.env` file in the project root:
+1. **Default configuration** (hardcoded defaults)
+2. **Configuration files** (JSON format)
+3. **Environment variables** (highest precedence)
+
+### Configuration Files
+
+DocBuddy looks for a `config.json` file in these locations (in order):
+- Current working directory (`./config.json`)
+- User's home directory (`~/.docbuddy/config.json`)
+- Package directory
+
+Create a configuration file based on the example:
+
+```bash
+cp config.json.example config.json
+```
+
+### Environment Variables
+
+Set up your API keys and other configuration options in a `.env` file in the project root:
 
 ```
+# LLM API keys
 OPENAI_API_KEY=your_openai_key
 CLAUDE_API_KEY=your_anthropic_key
 GEMINI_API_KEY=your_google_key
 GROQ_API_KEY=your_groq_key
+
+# DocBuddy configuration
+DOCBUDDY_DEFAULT_MODEL=openai
+DOCBUDDY_SOURCE_DIR=docs
+
+# Model-specific configuration (optional)
+OPENAI_MODEL=gpt-3.5-turbo
+CLAUDE_MODEL=claude-3-haiku-20240307
+GEMINI_MODEL=models/gemini-pro
+GROQ_MODEL=mixtral-8x7b-32768
+OLLAMA_MODEL=llama3
 ```
 
 For Ollama, make sure the Ollama service is running locally.
 
-### Custom Configuration
+### Configuration Structure
 
-Edit the `atari_assist/config.py` file to customize:
+The configuration file has these main sections:
 
 #### LLM Settings
-- `DEFAULT_MODEL`: Set the default LLM provider (e.g., "openai", "ollama", "claude", etc.)
-- `OPENAI_MODEL`: Specific OpenAI model to use (e.g., "gpt-3.5-turbo")
-- `OLLAMA_MODEL`: Specific Ollama model to use (e.g., "llama3")
-- `CLAUDE_MODEL`: Specific Claude model to use
-- `GEMINI_MODEL`: Specific Gemini model to use
-- `GROQ_MODEL`: Specific Groq model to use
+```json
+"llm": {
+  "default_model": "openai",
+  "openai": {
+    "model": "gpt-3.5-turbo"
+  },
+  "ollama": {
+    "model": "llama3",
+    "base_url": "http://localhost:11434"
+  }
+  // other providers...
+}
+```
 
 #### RAG Settings
-You can modify these in `core/document_retrieval.py`:
-- `DEFAULT_CHUNK_SIZE`: Default size of document chunks (default: 1000 characters)
-- `DEFAULT_CHUNK_OVERLAP`: Default overlap between chunks (default: 200 characters)
+```json
+"rag": {
+  "source_dir": "docs",
+  "chunk_size": 1000,
+  "chunk_overlap": 200,
+  "embedding_model": "all-MiniLM-L6-v2",
+  "kb_dir": ".kb"
+}
+```
 
-These can also be set via command line when building the knowledge base.
+#### Prompt Templates
+```json
+"prompts": {
+  "default_template": "isolation",
+  "templates": {
+    "isolation": "You are a helpful assistant...",
+    "complementary": "You are a helpful assistant...",
+    "supplementary": "You are a helpful assistant..."
+  }
+}
+```
+
+#### Web Interface Settings
+```json
+"web": {
+  "title": "DocBuddy",
+  "host": "0.0.0.0",
+  "port": 8000,
+  "debug": true
+}
+```
+
+Many of these settings can also be overridden via command-line parameters when using the CLI.
 
 ## RAG Implementation
 
-Atari Assist implements a Retrieval-Augmented Generation (RAG) system with the following features:
+DocBuddy implements an advanced Retrieval-Augmented Generation (RAG) system with the following features:
 
 ### Document Loading
 - Recursively searches directories for documentation files
 - Supports any text-based document format
 - Maintains file path information for better source tracking
+- Configurable source directory through config files or environment variables
 
 ### Document Chunking
 - Splits documents into smaller, semantically meaningful chunks
 - Preserves sentence boundaries for context
-- Configurable chunk size and overlap
+- Fully configurable chunk size and overlap
+- Metadata tracking to avoid unnecessary rebuilds
 
-### Semantic Search (when available)
+### Semantic Search
 - Uses sentence-transformers for computing embeddings
+- Choice of different embedding models (all-MiniLM-L6-v2, all-mpnet-base-v2, etc.)
 - Falls back to lexical search when embedding libraries aren't available
 - Pre-computes and caches embeddings for better performance
+
+### Prompt Templates
+- Multiple built-in templates with different LLM knowledge utilization strategies:
+  - **Isolation**: Uses only document knowledge (good for factual queries)
+  - **Complementary**: Uses documents first, falls back to model knowledge if needed
+  - **Supplementary**: Combines document knowledge with model knowledge
+- Easily customizable through configuration files
 
 ### Knowledge Base Management
 - Builds and saves embeddings to disk
 - Loads pre-built knowledge base for faster startup
-- Command-line tools for managing the knowledge base
+- Tracks changes to avoid unnecessary rebuilding
+- Comprehensive command-line tools for managing the knowledge base
 
 ## Project Structure
 
 ```
-atari_assist/
+docbuddy/
 ├── __init__.py
-├── config.py
+├── config.py           # Configuration system
+├── main.py             # High-level API
 ├── core/               # Core functionality
 │   ├── __init__.py
 │   ├── document_retrieval.py  # Advanced RAG implementation
-│   ├── prompt_builder.py
-│   └── query_processor.py
+│   ├── prompt_builder.py      # Template rendering
+│   └── query_processor.py     # Question answering
 ├── llm/                # LLM integrations
 │   ├── __init__.py
 │   ├── base.py
@@ -236,7 +373,7 @@ pip install -e ".[full]"
 pytest
 
 # Run tests with coverage
-pytest --cov=atari_assist
+pytest --cov=docbuddy
 
 # Run specific test file
 pytest tests/test_document_retrieval.py
@@ -252,7 +389,7 @@ ruff format .
 ruff check .
 
 # Type checking
-mypy atari_assist
+mypy docbuddy
 ```
 
 ## Documentation
@@ -260,14 +397,14 @@ mypy atari_assist
 - Detailed docstrings follow the Google Python Style Guide
 - See the `CONTRIBUTING.md` file for contributor guidelines
 
-## Adding Your Own Atari Documentation
+## Adding Your Own Documentation
 
-Place your Atari 2600 documentation files in the `atari_docs` directory. You can organize files in subfolders as needed. The system will automatically load and index all documents.
+Place your documentation files in the configured source directory (default is `docs/`). You can organize files in subfolders as needed. The system will automatically load and index all documents.
 
 After adding new documentation, rebuild the knowledge base:
 
 ```bash
-atari-assist build-kb
+docbuddy build-kb
 ```
 
 ## License
@@ -281,4 +418,5 @@ Contributions are welcome! Please see the [CONTRIBUTING.md](CONTRIBUTING.md) fil
 ## Acknowledgments
 
 - Thanks to all contributors who have helped with this project
-- Special thanks to the Atari 2600 programming community for their amazing resources
+- This project evolved from Atari Assist, which was focused specifically on Atari 2600 development
+- Thanks to the open-source LLM and RAG communities for their excellent tools and libraries

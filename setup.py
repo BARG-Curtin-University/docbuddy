@@ -5,14 +5,14 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="atari-assist",
+    name="docbuddy",
     version="0.1.0",
-    description="CLI and web assistant for Atari 2600 development using LLMs",
+    description="CLI and web assistant for document collections using LLMs and RAG",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    author="Atari Assist Contributors",
+    author="DocBuddy Contributors",
     author_email="your_email@example.com",
-    url="https://github.com/yourusername/atari-assist",
+    url="https://github.com/yourusername/docbuddy",
     packages=find_packages(),
     include_package_data=True,
     python_requires=">=3.9",
@@ -25,7 +25,8 @@ setup(
         "google-generativeai",
         "groq",
         "python-fasthtml",
-        "python-dotenv"
+        "python-dotenv",
+        "textual>=0.52.1"
     ],
     extras_require={
         "dev": [
@@ -52,7 +53,8 @@ setup(
     entry_points={
         "console_scripts": [
             "atari-assist=atari_assist.cli.main:app",
-            "atari-assist-web=atari_assist.web.app:serve_app"
+            "atari-assist-web=atari_assist.web.app:serve_app",
+            "docbuddy=docbuddy.cli.main:app"
         ],
     },
     classifiers=[
@@ -66,6 +68,6 @@ setup(
         "Intended Audience :: Developers",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
-    keywords="atari, 2600, llm, assistant, cli, web, rag",
+    keywords="rag, llm, assistant, cli, web, documentation, chat, knowledge base",
 )
 

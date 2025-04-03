@@ -1,8 +1,8 @@
 [project]
-name = "atari-assist"
+name = "docbuddy"
 version = "0.1.0"
-description = "CLI assistant for Atari 2600 development using LLMs"
-authors = ["Your Name <you@example.com>"]
+description = "CLI and web assistant for document collections using LLMs and RAG"
+authors = ["DocBuddy Contributors <you@example.com>"]
 requires-python = ">=3.9"
 dependencies = [
     "typer[all]",
@@ -11,11 +11,36 @@ dependencies = [
     "requests",
     "anthropic",
     "google-generativeai",
-    "groq"
+    "groq",
+    "python-fasthtml",
+    "python-dotenv",
+    "textual>=0.52.1"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "ruff",
+    "black",
+    "mypy"
+]
+embeddings = [
+    "numpy",
+    "sentence-transformers"
+]
+full = [
+    "numpy",
+    "sentence-transformers",
+    "pytest",
+    "pytest-cov",
+    "ruff",
+    "black",
+    "mypy"
 ]
 
 [project.scripts]
-atari-assist = "atari_assist.main:app"
+docbuddy = "docbuddy.cli.main:app"
 
 [tool.uv]
 format = true
