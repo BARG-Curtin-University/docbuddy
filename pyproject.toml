@@ -1,0 +1,30 @@
+[project]
+name = "atari-assist"
+version = "0.1.0"
+description = "CLI assistant for Atari 2600 development using LLMs"
+authors = ["Your Name <you@example.com>"]
+requires-python = ">=3.9"
+dependencies = [
+    "typer[all]",
+    "rich",
+    "openai",
+    "requests",
+    "anthropic",
+    "google-generativeai",
+    "groq"
+]
+
+[project.scripts]
+atari-assist = "atari_assist.main:app"
+
+[tool.uv]
+format = true
+
+[tool.ruff]
+line-length = 100
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q"
+testpaths = ["tests"]
+
