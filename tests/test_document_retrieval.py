@@ -3,7 +3,7 @@ import os
 import tempfile
 import pytest
 from pathlib import Path
-from docbuddy.core.document_retrieval import load_documents, get_best_chunks
+from ask_docs.core.document_retrieval import load_documents, get_best_chunks
 
 def test_load_documents_empty_dir():
     """Test loading documents from an empty directory."""

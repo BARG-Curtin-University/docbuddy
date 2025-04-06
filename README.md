@@ -1,11 +1,11 @@
-# DocBuddy
+# AskDocs
 
 A general-purpose document assistant for any documentation using RAG and LLMs like OpenAI, Claude, Gemini, Groq, and Ollama.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python Version](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/downloads/)
 
-> **Note**: DocBuddy is a general-purpose document assistant that can work with any type of documentation. It uses a Retrieval-Augmented Generation (RAG) architecture to provide accurate and contextual answers based on your documents.
+> **Note**: AskDocs is a general-purpose document assistant that can work with any type of documentation. It uses a Retrieval-Augmented Generation (RAG) architecture to provide accurate and contextual answers based on your documents.
 
 ## Features
 
@@ -27,7 +27,7 @@ A general-purpose document assistant for any documentation using RAG and LLMs li
 
 ## Overview
 
-DocBuddy is a general-purpose document assistant for any documentation. It works by:
+AskDocs is a general-purpose document assistant for any documentation. It works by:
 
 1. Loading documentation from a specified directory (including subfolders)
 2. Splitting documents into smaller chunks for precise retrieval with configurable size and overlap
@@ -43,8 +43,8 @@ DocBuddy is a general-purpose document assistant for any documentation. It works
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/docbuddy.git
-cd docbuddy
+git clone https://github.com/yourusername/ask-docs.git
+cd ask-docs
 
 # Basic installation
 pip install -e .
@@ -68,95 +68,112 @@ pip install -e ".[full]"
 
 ### Ask a question using OpenAI (default)
 ```bash
-docbuddy ask "How do I implement a REST API?"
+askdocs ask "How do I implement a REST API?"
 ```
 
 ### Use a different LLM backend
 ```bash
-docbuddy ask "What is dependency injection?" --model ollama
-docbuddy ask "How to write unit tests?" --model claude
-docbuddy ask "Explain Docker containers" --model gemini
-docbuddy ask "What is functional programming?" --model groq
+askdocs ask "What is dependency injection?" --model ollama
+askdocs ask "How to write unit tests?" --model claude
+askdocs ask "Explain Docker containers" --model gemini
+askdocs ask "What is functional programming?" --model groq
 ```
 
 ### Use different prompt templates
 ```bash
 # Use only document knowledge (isolation)
-docbuddy ask "What's in this documentation?" --template isolation
+askdocs ask "What's in this documentation?" --template isolation
 
 # Use documents first, fall back to model knowledge if needed (complementary)
-docbuddy ask "Compare React and Angular" --template complementary
+askdocs ask "Compare React and Angular" --template complementary
 
 # Combine document knowledge with model knowledge (supplementary)
-docbuddy ask "Explain microservices architecture" --template supplementary
+askdocs ask "Explain microservices architecture" --template supplementary
 ```
 
 ### Preview top matching docs before asking
 ```bash
-docbuddy preview "authentication best practices"
+askdocs preview "authentication best practices"
 ```
 
 ### Build or rebuild the knowledge base
 ```bash
 # Build with saved embeddings (recommended)
-docbuddy build-kb
+askdocs build-kb
 
 # Build without saving embeddings
-docbuddy build-kb --no-save-embeddings
+askdocs build-kb --no-save-embeddings
 
 # Customize chunking parameters
-docbuddy build-kb --chunk-size 500 --chunk-overlap 100
+askdocs build-kb --chunk-size 500 --chunk-overlap 100
 
 # Use a different embedding model
-docbuddy build-kb --embedding-model all-mpnet-base-v2
+askdocs build-kb --embedding-model all-mpnet-base-v2
 
 # Force rebuild even if documents haven't changed
-docbuddy build-kb --force
+askdocs build-kb --force
 
 # Use a custom source directory
-docbuddy build-kb --source-dir /path/to/your/docs
+askdocs build-kb --source-dir /path/to/your/docs
 ```
 
 ### View knowledge base information
 ```bash
-docbuddy kb-info
+askdocs kb-info
 ```
 
 ### View configuration information
 ```bash
-docbuddy config-info
+askdocs config-info
 ```
 
 ### Check if embedding libraries are installed
 ```bash
-docbuddy check-embedding-libs
+askdocs check-embedding-libs
 ```
 
 ### List supported models and templates
 ```bash
-docbuddy list-models
-docbuddy list-templates
+askdocs list-models
+askdocs list-templates
 ```
 
 ## Interface Options
 
-DocBuddy offers three different interfaces to suit your preferences and use cases.
+AskDocs offers four different interfaces to suit your preferences and use cases.
+
+### Python API (Importable)
+
+The Python API allows you to use AskDocs programmatically in your own applications:
+
+```python
+from ask_docs.main import ask_question, preview_matches, get_kb_info
+
+# Ask a question using the default model
+answer = ask_question("How do I implement a REST API?")
+
+# Preview matching documents
+matches = preview_matches("authentication best practices")
+
+# Get knowledge base information
+kb_info = get_kb_info()
+```
 
 ### Command-Line Interface (CLI)
 
 The CLI provides a traditional command-line experience with rich text output:
 
 ```bash
-docbuddy ask "How do I implement a REST API?"
+askdocs ask "How do I implement a REST API?"
 ```
 
 ### Web Application
 
-DocBuddy includes a FastHTML web interface with a user-friendly UI and 100% server-side rendering.
+AskDocs includes a FastHTML web interface with a user-friendly UI and 100% server-side rendering.
 
 ```bash
 # Start the web server
-docbuddy web
+askdocs web
 ```
 
 By default, the server runs on http://localhost:8000
@@ -176,7 +193,7 @@ The TUI provides a rich terminal interface using the Textual framework:
 
 ```bash
 # Start the TUI application
-docbuddy tui
+askdocs tui
 ```
 
 #### TUI Features
@@ -220,9 +237,9 @@ CLAUDE_API_KEY=your_anthropic_key
 GEMINI_API_KEY=your_google_key
 GROQ_API_KEY=your_groq_key
 
-# DocBuddy configuration
-DOCBUDDY_DEFAULT_MODEL=openai
-DOCBUDDY_SOURCE_DIR=docs
+# AskDocs configuration
+ASKDOCS_DEFAULT_MODEL=openai
+ASKDOCS_SOURCE_DIR=docs
 
 # Model-specific configuration (optional)
 OPENAI_MODEL=gpt-3.5-turbo
@@ -279,7 +296,7 @@ The configuration file has these main sections:
 #### Web Interface Settings
 ```json
 "web": {
-  "title": "DocBuddy",
+  "title": "AskDocs",
   "host": "0.0.0.0",
   "port": 8000,
   "debug": true
@@ -326,7 +343,7 @@ DocBuddy implements an advanced Retrieval-Augmented Generation (RAG) system with
 ## Project Structure
 
 ```
-docbuddy/
+ask_docs/
 ├── __init__.py
 ├── config.py           # Configuration system
 ├── main.py             # High-level API
@@ -373,7 +390,7 @@ pip install -e ".[full]"
 pytest
 
 # Run tests with coverage
-pytest --cov=docbuddy
+pytest --cov=ask_docs
 
 # Run specific test file
 pytest tests/test_document_retrieval.py
@@ -389,13 +406,18 @@ ruff format .
 ruff check .
 
 # Type checking
-mypy docbuddy
+mypy ask_docs
 ```
 
 ## Documentation
 
 - Detailed docstrings follow the Google Python Style Guide
 - See the `CONTRIBUTING.md` file for contributor guidelines
+- Interface-specific documentation available in the docs/interfaces directory:
+  - [Python API](docs/interfaces/python_api.md)
+  - [Command-Line Interface](docs/interfaces/cli.md)
+  - [Web Interface](docs/interfaces/web.md)
+  - [Text User Interface](docs/interfaces/tui.md)
 
 ## Adding Your Own Documentation
 

@@ -3,8 +3,8 @@ import pytest
 from unittest.mock import patch, MagicMock
 from starlette.testclient import TestClient
 
-from docbuddy.web.app import create_app
-from docbuddy.main import ask_question, preview_matches
+from ask_docs.web.app import create_app
+from ask_docs.main import ask_question, preview_matches
 
 @pytest.fixture
 def client():
@@ -24,7 +24,7 @@ def test_index_route(client):
     assert "model" in content
     assert "ask" in content
 
-@patch('docbuddy.main.ask_question')
+@patch('ask_docs.main.ask_question')
 def test_ask_question_route(mock_ask, client):
     """Test the ask question route."""
     # Setup mock
@@ -42,7 +42,7 @@ def test_ask_question_route(mock_ask, client):
     assert "How to implement a REST API?" in response.text
     mock_ask.assert_called_once()
 
-@patch('docbuddy.main.preview_matches')
+@patch('ask_docs.main.preview_matches')
 def test_preview_route(mock_preview, client):
     """Test the preview route."""
     # Setup mock

@@ -2,13 +2,13 @@
 import pytest
 from unittest.mock import patch, MagicMock
 
-from docbuddy.llm.base import BaseLLM
-from docbuddy.llm import get_llm
-from docbuddy.llm.openai_llm import OpenAI_LLM
-from docbuddy.llm.ollama_llm import OllamaLLM
-from docbuddy.llm.anthropic_llm import ClaudeLLM
-from docbuddy.llm.gemini_llm import GeminiLLM
-from docbuddy.llm.groq_llm import GroqLLM
+from ask_docs.llm.base import BaseLLM
+from ask_docs.llm import get_llm
+from ask_docs.llm.openai_llm import OpenAI_LLM
+from ask_docs.llm.ollama_llm import OllamaLLM
+from ask_docs.llm.anthropic_llm import ClaudeLLM
+from ask_docs.llm.gemini_llm import GeminiLLM
+from ask_docs.llm.groq_llm import GroqLLM
 
 def test_get_llm():
     """Test that get_llm returns the correct LLM implementation."""
@@ -33,7 +33,7 @@ def test_get_llm_invalid():
         get_llm("invalid_model")
 
 # OpenAI LLM Tests
-@patch('docbuddy.llm.openai_llm.OpenAI')
+@patch('ask_docs.llm.openai_llm.OpenAI')
 def test_openai_llm(mock_openai):
     """Test the OpenAI LLM implementation."""
     # Setup mock
@@ -52,7 +52,7 @@ def test_openai_llm(mock_openai):
     assert response == "This is a test response"
     mock_client.chat.completions.create.assert_called_once()
 
-@patch('docbuddy.llm.openai_llm.OpenAI')
+@patch('ask_docs.llm.openai_llm.OpenAI')
 def test_openai_llm_no_api_key(mock_openai):
     """Test OpenAI LLM with no API key."""
     llm = OpenAI_LLM(api_key=None)
@@ -62,7 +62,7 @@ def test_openai_llm_no_api_key(mock_openai):
     mock_openai.assert_not_called()
 
 # Ollama LLM Tests
-@patch('docbuddy.llm.ollama_llm.requests.post')
+@patch('ask_docs.llm.ollama_llm.requests.post')
 def test_ollama_llm(mock_post):
     """Test the Ollama LLM implementation."""
     # Setup mock
@@ -78,7 +78,7 @@ def test_ollama_llm(mock_post):
     assert response == "This is a test response"
     mock_post.assert_called_once()
 
-@patch('docbuddy.llm.ollama_llm.requests.post')
+@patch('ask_docs.llm.ollama_llm.requests.post')
 def test_ollama_llm_error(mock_post):
     """Test Ollama LLM error handling."""
     # Setup mock to raise an exception

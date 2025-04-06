@@ -156,3 +156,10 @@ cython_debug/
 # Project specific
 atari_docs/*
 !atari_docs/.gitkeep
+
+# DocBuddy specific
+config.json
+.kb/
+docbuddy-*/
+*.whl
+*.tar.gz

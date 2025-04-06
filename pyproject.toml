@@ -1,6 +1,6 @@
 [project]
-name = "docbuddy"
-version = "0.1.2"
+name = "ask-docs"
+version = "0.1.3"
 description = "CLI and web assistant for document collections using LLMs and RAG"
 authors = [
     {name = "Michael Borck", email = "michael@borck.me"}
@@ -57,7 +57,7 @@ full = [
 ]
 
 [project.scripts]
-docbuddy = "docbuddy.cli.main:app"
+askdocs = "ask_docs.cli.main:app"
 
 [tool.uv]
 format = true

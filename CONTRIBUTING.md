@@ -1,6 +1,6 @@
-# Contributing to DocBuddy
+# Contributing to AskDocs
 
-Thank you for considering contributing to DocBuddy! This document provides guidelines and instructions for contributing.
+Thank you for considering contributing to AskDocs! This document provides guidelines and instructions for contributing.
 
 ## Code of Conduct
 
@@ -38,8 +38,8 @@ Enhancement suggestions are welcome. Please include:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/docbuddy.git
-   cd docbuddy
+   git clone https://github.com/yourusername/ask-docs.git
+   cd ask-docs
    ```
 
 2. Install development dependencies:
@@ -62,10 +62,19 @@ Enhancement suggestions are welcome. Please include:
    ruff check .
    ```
 
+6. Clean up build artifacts after building/publishing:
+   ```bash
+   # Remove build artifacts
+   python cleanup.py
+   
+   # Remove everything including knowledge base and config files
+   python cleanup.py --all
+   ```
+
 ## Project Structure
 
 ```
-docbuddy/
+ask_docs/
 ├── core/               # Core functionality
 ├── llm/                # LLM integrations
 ├── cli/                # CLI interface
@@ -107,4 +116,4 @@ Please document your code with docstrings following the Google Python Style Guid
 - Ensure all tests pass before submitting a pull request
 - Add both unit tests and integration tests as appropriate
 
-Thank you for contributing to DocBuddy!
+Thank you for contributing to AskDocs!

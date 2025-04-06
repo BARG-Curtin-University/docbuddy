@@ -4,9 +4,9 @@ CLAUDE_API_KEY=sk-ant-...
 GEMINI_API_KEY=AIza...
 GROQ_API_KEY=gsk_...
 
-# DocBuddy configuration
-DOCBUDDY_DEFAULT_MODEL=openai
-DOCBUDDY_SOURCE_DIR=docs
+# AskDocs configuration
+ASKDOCS_DEFAULT_MODEL=openai
+ASKDOCS_SOURCE_DIR=docs
 
 # Model-specific configuration (optional)
 OPENAI_MODEL=gpt-3.5-turbo
